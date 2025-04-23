@@ -4,7 +4,11 @@
 #include <cstdio>
 
 template <size_t N>
-void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr){
+void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr){
+        return;
+    }
+    
     #pragma parallel omp for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         data_ptr->inputs.num1[idx] = static_cast<float>(3 * (idx + 1));
@@ -13,13 +17,15 @@ void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr){
 }
 
 template <size_t N>
-void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr){
-    float a, b;
+void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr){
+        return;
+    }
     
     #pragma parallel omp for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
-        a = data_ptr->inputs.num1[idx];
-        b = data_ptr->inputs.num2[idx];
+        auto & a = data_ptr->inputs.num1[idx];
+        auto & b = data_ptr->inputs.num2[idx];
         
         data_ptr->outputs.sum[idx] = a + b;
         data_ptr->outputs.diff[idx] = a - b;
@@ -29,7 +35,11 @@ void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr){
 }
 
 template <size_t N>
-void ProgramData_display(std::unique_ptr<ProgramData<N>> & data_ptr){
+void ProgramData_display(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr){
+        return;
+    }
+    
     size_t size = (data_ptr->size > 50) ? 50 : data_ptr->size;
     for(size_t idx = 0; idx < size; ++idx){
         std::printf(
@@ -45,7 +55,7 @@ void ProgramData_display(std::unique_ptr<ProgramData<N>> & data_ptr){
 }
 
 template <size_t N>
-void ProgramData_exec(std::unique_ptr<ProgramData<N>> & data_ptr){
+void ProgramData_exec(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
     ProgramData_init(data_ptr);
     ProgramData_compute(data_ptr);
     ProgramData_display(data_ptr);
