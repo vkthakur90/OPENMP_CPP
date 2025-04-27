@@ -16,8 +16,8 @@ void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
     }
 }
 
-template <size_t N>
-void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+template <size_t N> 
+void ProgramData_computeSum(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
     if(data_ptr == nullptr){
         return;
     }
@@ -28,10 +28,60 @@ void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
         auto & b = data_ptr->inputs.num2[idx];
         
         data_ptr->outputs.sum[idx] = a + b;
+    }
+}
+
+template <size_t N> 
+void ProgramData_computeDifference(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr){
+        return;
+    }
+    
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        auto & a = data_ptr->inputs.num1[idx];
+        auto & b = data_ptr->inputs.num2[idx];
+        
         data_ptr->outputs.diff[idx] = a - b;
+    }
+}
+
+template <size_t N> 
+void ProgramData_computeProduct(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr){
+        return;
+    }
+    
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        auto & a = data_ptr->inputs.num1[idx];
+        auto & b = data_ptr->inputs.num2[idx];
+        
         data_ptr->outputs.prod[idx] = a * b;
+    }
+}
+
+template <size_t N> 
+void ProgramData_computeRatio(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr){
+        return;
+    }
+    
+    #pragma omp parallel for simd schedule(static)
+    for(size_t idx = 0; idx < data_ptr->size; ++idx){
+        auto & a = data_ptr->inputs.num1[idx];
+        auto & b = data_ptr->inputs.num2[idx];
+        
         data_ptr->outputs.ratio[idx] = (b != 0.0f) ? a/b : 0;
     }
+}
+
+template <size_t N>
+void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    ProgramData_computeSum(data_ptr);
+    ProgramData_computeDifference(data_ptr);
+    ProgramData_computeProduct(data_ptr);
+    ProgramData_computeRatio(data_ptr);
 }
 
 template <size_t N>
