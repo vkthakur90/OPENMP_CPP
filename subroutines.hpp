@@ -9,7 +9,7 @@ void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
         return;
     }
     
-    #pragma parallel omp for simd schedule(static)
+    #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         data_ptr->inputs.num1[idx] = static_cast<float>(3 * (idx + 1));
         data_ptr->inputs.num2[idx] = static_cast<float>(1 * (idx + 1));
@@ -22,7 +22,7 @@ void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
         return;
     }
     
-    #pragma parallel omp for simd schedule(static)
+    #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         auto & a = data_ptr->inputs.num1[idx];
         auto & b = data_ptr->inputs.num2[idx];
@@ -30,7 +30,7 @@ void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
         data_ptr->outputs.sum[idx] = a + b;
         data_ptr->outputs.diff[idx] = a - b;
         data_ptr->outputs.prod[idx] = a * b;
-        data_ptr->outputs.ratio[idx] = (b != 0) ? a/b : 0;
+        data_ptr->outputs.ratio[idx] = (b != 0.0f) ? a/b : 0;
     }
 }
 
