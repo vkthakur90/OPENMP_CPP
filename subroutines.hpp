@@ -5,10 +5,6 @@
 
 template <size_t N>
 void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    if(data_ptr == nullptr){
-        return;
-    }
-    
     #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         data_ptr->inputs.num1[idx] = static_cast<float>(3 * (idx + 1));
@@ -18,10 +14,6 @@ void ProgramData_init(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
 
 template <size_t N> 
 void ProgramData_computeSum(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    if(data_ptr == nullptr){
-        return;
-    }
-    
     #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         auto & a = data_ptr->inputs.num1[idx];
@@ -33,10 +25,6 @@ void ProgramData_computeSum(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept
 
 template <size_t N> 
 void ProgramData_computeDifference(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    if(data_ptr == nullptr){
-        return;
-    }
-    
     #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         auto & a = data_ptr->inputs.num1[idx];
@@ -48,10 +36,6 @@ void ProgramData_computeDifference(std::unique_ptr<ProgramData<N>> & data_ptr) n
 
 template <size_t N> 
 void ProgramData_computeProduct(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    if(data_ptr == nullptr){
-        return;
-    }
-    
     #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         auto & a = data_ptr->inputs.num1[idx];
@@ -63,10 +47,6 @@ void ProgramData_computeProduct(std::unique_ptr<ProgramData<N>> & data_ptr) noex
 
 template <size_t N> 
 void ProgramData_computeRatio(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    if(data_ptr == nullptr){
-        return;
-    }
-    
     #pragma omp parallel for simd schedule(static)
     for(size_t idx = 0; idx < data_ptr->size; ++idx){
         auto & a = data_ptr->inputs.num1[idx];
@@ -86,10 +66,6 @@ void ProgramData_compute(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
 
 template <size_t N>
 void ProgramData_display(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
-    if(data_ptr == nullptr){
-        return;
-    }
-    
     size_t size = (data_ptr->size > 50) ? 50 : data_ptr->size;
     for(size_t idx = 0; idx < size; ++idx){
         std::printf(
@@ -106,6 +82,10 @@ void ProgramData_display(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
 
 template <size_t N>
 void ProgramData_exec(std::unique_ptr<ProgramData<N>> & data_ptr) noexcept {
+    if(data_ptr == nullptr) {
+        return;    
+    }
+    
     ProgramData_init(data_ptr);
     ProgramData_compute(data_ptr);
     ProgramData_display(data_ptr);
